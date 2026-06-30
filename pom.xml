@@ -6,7 +6,7 @@
 
 	<groupId>am.ik.openai</groupId>
 	<artifactId>openai-java-client-restclient</artifactId>
-	<version>0.1.0-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>openai-java-client-restclient</name>
 	<description>A Spring RestClient based HttpClient implementation for the OpenAI Java SDK</description>
 
