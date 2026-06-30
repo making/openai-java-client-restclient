@@ -56,10 +56,10 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Boot, inject the auto-configured task executor so that virtual threads are used when
  * {@code spring.threads.virtual.enabled=true}: <pre>{@code
  * &#64;Bean
- * RestClientHttpClient openAiHttpClient(ClientHttpRequestFactory requestFactory,
+ * RestClientHttpClient openAiHttpClient(RestClient.Builder restClientBuilder,
  *         &#64;Qualifier("applicationTaskExecutor") Executor executor) {
  *     return RestClientHttpClient.builder()
- *         .requestFactory(requestFactory)
+ *         .restClientBuilder(restClientBuilder)
  *         .executor(executor)
  *         .build();
  * }
