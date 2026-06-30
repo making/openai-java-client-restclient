@@ -115,6 +115,29 @@ interrupts the worker thread to abort the in-flight request. This is honoured by
 `HttpClient` (`JdkClientHttpRequestFactory`); factories based on `HttpURLConnection` (such as
 `SimpleClientHttpRequestFactory`) do not respond to interruption.
 
+## Streaming responses (Server-Sent Events)
+
+Streaming endpoints such as `chat().completions().createStreaming(...)` work with this library.
+The SDK parses the SSE stream itself by reading the response body line by line, and
+`RestClientHttpClient` exposes that body as a live, non-buffered `InputStream`. For streaming to
+work, the response must not be read to completion before the SDK consumes it.
+
+Avoid any configuration that buffers or pre-reads the response body. Otherwise a streaming call
+blocks until the whole (potentially unbounded) response has been received, which effectively
+hangs the call:
+
+- Do not wrap the request factory with `BufferingClientHttpRequestFactory`.
+- Do not register a `ClientHttpRequestInterceptor` that reads or logs the response body. Body
+  logging interceptors, such as Zalando Logbook's `LogbookClientHttpRequestInterceptor`, read
+  the entire response body in order to log it, which is incompatible with streaming. If you rely
+  on such an interceptor, exclude the streaming endpoints from it or disable response body
+  logging for them.
+
+Interceptors that only inspect the request or the headers do not affect response streaming.
+Note, however, that registering any `ClientHttpRequestInterceptor` makes Spring buffer the
+*request* body in memory (`InterceptingClientHttpRequest`), which removes request-side streaming
+for large uploads such as files.
+
 ## Builder options
 
 `RestClientHttpClient.builder()` returns a builder with the following options.
